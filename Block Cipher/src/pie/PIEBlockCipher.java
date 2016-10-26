@@ -100,7 +100,10 @@ public class PIEBlockCipher {
     
     public String transpose(String bits, boolean right) {
         String result = "";
-        int col = 4;
+        int col = (int) Math.floor(Math.sqrt(bits.length()));
+        if (col%4 != 0) {
+            col=4;
+        }
         int row = bits.length()/col;
         char[][] matrix = new char[row][col];
         int idx = 0;
@@ -165,7 +168,7 @@ public class PIEBlockCipher {
         }
         
         StringBuilder builder = new StringBuilder();
-        for(int i=0; i<plaintextBlock.length; i++) {
+        for(int i=plaintextBlock.length-1; i>=0; i--) {
             builder.append(plaintextBlock[i]);
         }
         return builder.toString();
