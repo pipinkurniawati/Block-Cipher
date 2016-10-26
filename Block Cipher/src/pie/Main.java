@@ -28,6 +28,9 @@ public class Main {
         String plaintext = input.nextLine();
         
         PIEBlockCipher pie = new PIEBlockCipher(plaintext,key);
+        //System.out.println(pie.xor("1101", "0100"));
+        //System.out.println(pie.transpose("1100101000011111", true));
+        //System.out.println(pie.transpose("1100101000011111", false));
         System.out.println(pie.encrypt());
     }
 }

@@ -6,8 +6,10 @@
 package pie;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import vigenere.ExtendedVigenere;
 
 /**
  *
@@ -21,6 +23,7 @@ public class PIEBlockCipher {
     public PIEBlockCipher(String plaintext, String key) {
         this.key = key;
         this.plaintextBlock = parsePlaintext(plaintext);
+        //System.out.println(asciiToBits(plaintext));
         this.pseudoRandom = new Random(getSeed(key));
     }
     
@@ -95,19 +98,83 @@ public class PIEBlockCipher {
         return result.toString();
     }
     
-    public String transpose(String text) {
+    public String transpose(String bits, boolean right) {
+        String result = "";
+        int col = 4;
+        int row = bits.length()/col;
+        char[][] matrix = new char[row][col];
+        int idx = 0;
+        for (int i=0; i<row; i++) {
+            for (int j=0; j<col; j++) {
+                matrix[i][j] = bits.charAt(idx);
+                idx++;
+            }
+        }     
+        if (right) {
+            for (int j=col-1; j>=0; j--) {
+                for (int i=0; i<row; i++) {
+                    result += matrix[i][j];
+                }
+            }
+        } else {
+            for (int j=0; j<col; j++) {
+                for (int i=row-1; i>=0; i--) {
+                    result += matrix[i][j];
+                }
+            }
+        }    
+        return result;
+    }
+    
+    public String xor(String text, String key) {
         String result = "";
         
-        // process
+        for (int i=0; i<text.length(); i++) {
+            char temp = '0';
+            if (text.charAt(i) == '1') {
+                if (key.charAt(i) == '1') {
+                    temp = '0';
+                } else if (key.charAt(i) == '0'){
+                    temp = '1';
+                }
+            } else if (text.charAt(i) == '0') {
+                if (key.charAt(i) == '1') {
+                    temp = '1';
+                } else if (key.charAt(i) == '0'){
+                    temp = '0';
+                }
+            }
+            result += temp;
+        }
         
         return result;
     }
     
     public String encrypt() {
-        String result = "";
+        for (int count=0; count<5; count++) {
+            String[] splittedKeys = splitString(permutate(asciiToBits(key)));
+            for (int i=0; i<plaintextBlock.length; i++) {
+                String temp = new String();
+                String[] splittedBlocks = splitString(permutate(plaintextBlock[i]));
+                splittedBlocks[0] = xor(splittedBlocks[0], splittedKeys[1]);
+                splittedBlocks[1] = xor(splittedBlocks[1], splittedKeys[0]);
+                temp += transpose(splittedBlocks[0], true);
+                temp += transpose(splittedBlocks[1], false);
+                plaintextBlock[i] = temp;
+            }
+        }
         
-        // process
-        
+        StringBuilder builder = new StringBuilder();
+        for(int i=0; i<plaintextBlock.length; i++) {
+            builder.append(plaintextBlock[i]);
+        }
+        return builder.toString();
+    }
+    
+    public String[] splitString(String text) {
+        String [] result = new String[2];
+        result[0] = text.substring(0, text.length()/2);
+        result[1] = text.substring(text.length()/2);
         return result;
     }
 }
