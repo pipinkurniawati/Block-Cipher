@@ -23,7 +23,7 @@ public class PIEBlockCipher {
     public PIEBlockCipher(String plaintext, String key) {
         this.key = key;
         this.plaintextBlock = parsePlaintext(plaintext);
-        //System.out.println(asciiToBits(plaintext));
+        System.out.println(asciiToBits(plaintext));
         this.pseudoRandom = new Random(getSeed(key));
     }
     
@@ -159,17 +159,20 @@ public class PIEBlockCipher {
             for (int i=0; i<plaintextBlock.length; i++) {
                 String temp = new String();
                 String[] splittedBlocks = splitString(permutate(plaintextBlock[i]));
-                splittedBlocks[0] = xor(splittedBlocks[0], splittedKeys[1]);
                 splittedBlocks[1] = xor(splittedBlocks[1], splittedKeys[0]);
-                temp += transpose(splittedBlocks[0], true);
-                temp += transpose(splittedBlocks[1], false);
+                if (i%2 == 0) {
+                    temp += transpose(splittedBlocks[1], false);
+                } else {
+                    temp += transpose(splittedBlocks[1], true);
+                }
+                temp += xor(splittedBlocks[0], temp);
                 plaintextBlock[i] = temp;
             }
         }
         
         StringBuilder builder = new StringBuilder();
-        for(int i=plaintextBlock.length-1; i>=0; i--) {
-            builder.append(plaintextBlock[i]);
+        for(int i=0; i<plaintextBlock.length; i++) {
+            builder.append(bitsToAscii(plaintextBlock[i]));
         }
         return builder.toString();
     }
