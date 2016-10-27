@@ -155,17 +155,12 @@ public class PIEBlockCipher {
     
     public String encrypt() {
         for (int count=0; count<5; count++) {
-            String[] splittedKeys = splitString(permutate(asciiToBits(key)));
             for (int i=0; i<plaintextBlock.length; i++) {
                 String temp = new String();
+                String[] splittedKeys = splitString(permutate(asciiToBits(key)));
                 String[] splittedBlocks = splitString(permutate(plaintextBlock[i]));
-                splittedBlocks[1] = xor(splittedBlocks[1], splittedKeys[0]);
-                if (i%2 == 0) {
-                    temp += transpose(splittedBlocks[1], false);
-                } else {
-                    temp += transpose(splittedBlocks[1], true);
-                }
-                temp += xor(splittedBlocks[0], temp);
+                temp += feistel(splittedBlocks[1], splittedKeys[1], false);
+                temp += feistel(splittedBlocks[0], splittedKeys[0], true);
                 plaintextBlock[i] = temp;
             }
         }
@@ -175,6 +170,20 @@ public class PIEBlockCipher {
             builder.append(bitsToAscii(plaintextBlock[i]));
         }
         return builder.toString();
+    }
+    
+    public String feistel(String plaintext, String key, boolean right) {
+        String temp = new String();
+        String[] splittedBlocks = splitString(plaintext);
+        String[] splittedKeys = splitString(key);
+        splittedBlocks[1] = xor(splittedBlocks[1], splittedKeys[0]);
+        if (!right) {
+            temp += transpose(splittedBlocks[1], false);
+        } else {
+            temp += transpose(splittedBlocks[1], true);
+        }
+        temp += xor(splittedBlocks[0], temp);
+        return temp;      
     }
     
     public String[] splitString(String text) {

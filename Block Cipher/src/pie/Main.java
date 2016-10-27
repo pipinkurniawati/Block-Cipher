@@ -5,6 +5,10 @@
  */
 package pie;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Scanner;
 
 /**
@@ -31,6 +35,24 @@ public class Main {
         //System.out.println(pie.xor("1101", "0100"));
         //System.out.println(pie.transpose("1100101000011111", true));
         //System.out.println(pie.transpose("1100101000011111", false));
-        System.out.println(pie.encrypt());
+        String result = pie.encrypt();
+        System.out.println(result);
+        
+        // Save to file
+        try {
+            File file = new File("cipherteks.txt");
+
+            // if file doesnt exists, then create it
+            if (!file.exists()) {
+                    file.createNewFile();
+            }
+
+            FileWriter fw = new FileWriter(file.getAbsoluteFile());
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write(result);
+            bw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
