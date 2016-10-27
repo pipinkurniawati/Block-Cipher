@@ -30,12 +30,15 @@ public class Main {
         
         System.out.print("Enter your plaintext: ");
         String plaintext = input.nextLine();
+        System.out.println("CHOOSE MODE");
+        System.out.println("1. ECB");
+        System.out.println("2. CBC");
+        System.out.print("your input: ");
+        String choice = input.nextLine(); System.out.println();
         
         PIEBlockCipher pie = new PIEBlockCipher(plaintext,key);
-        //System.out.println(pie.xor("1101", "0100"));
-        //System.out.println(pie.transpose("1100101000011111", true));
-        //System.out.println(pie.transpose("1100101000011111", false));
-        String result = pie.encrypt();
+        String result = "";
+        result = pie.encrypt(Integer.parseInt(choice));
         System.out.println(result);
         
         // Save to file

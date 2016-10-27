@@ -153,7 +153,7 @@ public class PIEBlockCipher {
         return result;
     }
     
-    public String encrypt() {
+    public String encrypt(int mode) {
         for (int count=0; count<5; count++) {
             for (int i=0; i<plaintextBlock.length; i++) {
                 String temp = new String();
@@ -162,6 +162,14 @@ public class PIEBlockCipher {
                 temp += feistel(splittedBlocks[1], splittedKeys[1], false);
                 temp += feistel(splittedBlocks[0], splittedKeys[0], true);
                 plaintextBlock[i] = temp;
+                
+                if (mode==2) {
+                    if (i!=plaintextBlock.length-1) {
+                        plaintextBlock[i+1] = xor(plaintextBlock[i+1], plaintextBlock[i]);
+                    }
+                } else if (mode==3) {
+                    //OFB
+                }
             }
         }
         
